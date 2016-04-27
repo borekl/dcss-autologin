@@ -66,6 +66,6 @@ rm -f $TMPF
 #--- login
 
 screen -X at $DCSS_SCRNO stuff l
-screen -X at $DCSS_SCRNO stuff "${DCSS_USER}"
-screen -X at $DCSS_SCRNO stuff "${DCSS_PASS}"
+screen -X at $DCSS_SCRNO stuff $(echo "${DCSS_USER}\r")
+screen -X at $DCSS_SCRNO stuff $(echo "${DCSS_PASS}\r")
 screen -X at $DCSS_SCRNO  msgwait 3
