@@ -1,0 +1,71 @@
+#!/bin/bash
+
+#============================================================================
+# DUNGEON CRAWL STONE SOUP public server autologin script
+# """"""""""""""""""""""""
+# Script for automatic logging into DCSS dgamelaunch based public servers.
+# This script must be run from within a screen session and it opens _new_
+# window for the game. Remember, that ssh  must not ask any questions during
+# logging in, so you will need to setup the pubkey authentication.
+# 
+# Following environment variables are required by the script:
+#
+# DCSS_SCRNO ... GNU screen number, must not conflict with an existing one
+# DCSS_HOST  ... server's hostname or SSH alias
+# DCSS_USER  ... username
+# DCSS_PASS  ... password
+#============================================================================
+
+#--- sanity checks
+
+if [ -z "$WINDOW" ]; then
+  echo "dcss-autologin: Not running from inside GNU screen"
+  exit 1
+fi
+
+if [ -z "$DCSS_HOST" ]; then
+  echo "dcss-autologin: Hostname not specified in DCSS_HOST"
+  exit 1
+fi
+
+if [ -z "$DCSS_USER" ]; then
+  echo "dcss-autologin: Username not specified in DCSS_USER"
+  exit 1
+fi
+
+if [ -z "$DCSS_PASS" ]; then
+  echo "dcss-autologin: Password not specified in DCSS_PASS"
+  exit 1
+fi
+
+#--- temporary file for screen hardcopies
+
+TMPF="/tmp/dcss-login.$$"
+
+#--- default screen number
+
+if [ -z "$SCRNO" ]; then
+  SCRNO=19
+fi
+
+#--- establish ssh session in new window
+
+screen -X screen -t "DCSS/${DCSS_HOST}" $DCSS_SCRNO ssh $DCSS_HOST
+screen -X at $DCSS_SCRNO msgwait 0
+
+#--- wait for prompt
+
+sleep 1
+while true; do
+  sleep 0.2
+  screen -X at $DCSS_SCRNO hardcopy $TMPF
+  grep '=>' $TMPF >/dev/null && break
+done
+rm -f $TMPF
+
+#--- login
+
+screen -X at $DCSS_SCRNO stuff l
+screen -X at $DCSS_SCRNO stuff "${DCSS_USER}"
+screen -X at $DCSS_SCRNO stuff "${DCSS_PASS}"
+screen -X at $DCSS_SCRNO  msgwait 3
