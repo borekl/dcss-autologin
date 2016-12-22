@@ -50,7 +50,11 @@ fi
 
 #--- establish ssh session in new window
 
-screen -X screen -t "DCSS/${DCSS_HOST}" $DCSS_SCRNO ssh $DCSS_HOST
+if [ -n "$DCSS_TERM" ]; then
+  screen -X screen -T $DCSS_TERM -t "DCSS/${DCSS_HOST}" $DCSS_SCRNO ssh $DCSS_HOST
+else
+  screen -X screen -t "DCSS/${DCSS_HOST}" $DCSS_SCRNO ssh $DCSS_HOST
+fi
 screen -X at $DCSS_SCRNO msgwait 0
 
 #--- wait for prompt

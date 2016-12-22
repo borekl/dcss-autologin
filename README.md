@@ -9,6 +9,7 @@ similar to this:
     #!/bin/bash
     
     env \
+      DCSS_TERM=putty-256color \
       DCSS_SCRNO=12 \
       DCSS_HOST="crawl.akrasiac.org" \
       DCSS_USER="MyUserName" \
@@ -20,6 +21,10 @@ during establishing the session.  That means that you must setup pubkey
 authentication (and the server must support it).
 
 The variables explained:
+
+* **DCSS_TERM** is terminal type.
+This variable is optional and can be used terminal type to be used
+with the new screen session in which the game is started.
 
 * **DCSS_SCRNO** is GNU screen's window number.
 You must use unused window, so choose something higher,
